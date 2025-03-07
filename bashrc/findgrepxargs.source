@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# Ex.    findgrepxargs  ..  -y .  ls -ltr
+# Ex.    findgrepxargs  ..  -y .  ls -ltr
+
+
+function findgrepxargs() {
+    local dir=$1
+    shift
+
+    # grepflags (optional)
+    #  usually you can skip this
+    #  if specified, it has to start with a -
+    #  if multiple flags, then quote it and include spaces as needed (and still start with a dash)
+    # note: the grep case-insensitive default is disabled here, so you are likely to want to specify -i or -y to reenable it
+    local grepflags=$1   
+    shift
+
+    # regex
+    #  can contain spaces, but will need to then be quoted.
+    local regex
+
+    if [[ "$grepflags" == "-"* ]] ; then 
+      # that really was grepflags, so now...
+      regex=$1
+      shift  # consume the regex parameter and leave the rest
+    else
+      # that was not really grepflags, so treat it as regex and leave the remaining parameters...
+      regex="$grepflags"
+      unset grepflags
+    fi
+    # the remaining parameters will be treated as command parameters.  They probably will not be quoted when used.
+
+    # Note: we do not quote $grepflags because 
+    #         if unset, then the quoted parameter is passed to grep as an empty string rather than a skipped parameter.   If we find that we want to specify multiple par
+    #         and if multiple flags were set, we don't want them treated as a single flag parameter
+    #       we do specify --no-ignore-case because IMHO that should be the default because it's easy to turn it off and cumbersome for the user to set it
+    find "$dir" -type f  -print0 | grep -z --no-filename --no-ignore-case $grepflags --regexp="$regex" -  | xargs --null $@ 
+    # if [ "$grepflags" = "notset" ] ; then
+    #   find "$dir" -type f  -print0 | grep -z --no-filename --no-ignore-case              --regexp="$regex" -  | xargs --null $@ 
+    # else
+    #   find "$dir" -type f  -print0 | grep -z --no-filename --no-ignore-case "$grepflags" --regexp="$regex" -  | xargs --null $@ 
+    # fi
+}
