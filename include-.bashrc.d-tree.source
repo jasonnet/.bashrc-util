@@ -1,0 +1,20 @@
+
+### support ~/.bashrc.d/ ###
+if [ -d "${HOME}/.bashrc.d" ]; then
+  OLDSHOPT=$(shopt -p nullglob)  # store the nullglob setting
+  shopt -s nullglob  # set nullglob to prevent the following loops from generating warnings on empty directories
+  for file in ${HOME}/.bashrc.d/*.source; do
+    echo "sourcing $file"
+    source "$file"
+  done
+  # Allow there to be whole subdirectories imported wholesale
+  for dirr in ${HOME}/.bashrc.d/*.d/; do
+    for file in ${dirr}/*.source; do
+      echo "sourcing $file"
+      source "$file"
+    done
+  done
+  eval "$OLDSHOPT"  # retore nullglob to original value
+else
+  echo "consider adding ~/.bashrc.d/*.source with local bash customizations"
+fi

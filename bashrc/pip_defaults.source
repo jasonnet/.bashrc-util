@@ -1,0 +1,4 @@
+
+# Make it unlikely that I'll accidentally install pip packages beyond the current virtual env
+
+export PIP_REQUIRE_VIRTUALENV=true

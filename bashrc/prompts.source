@@ -1,0 +1,88 @@
+
+
+# Support for including a variety of features when defining the command line prompt.
+
+# Our strategy is to have a single internal function that sets the command prompt
+# directly and numerous functions that users can invoke that will set environment 
+# variables that influence the behavior of the subsequent invocation of the inernal
+# function.
+
+
+# The internal function that sets the prompt directly.
+_jasonnet_set_prompt() {
+  # The function is implemented by using a prompt template 
+  # and injecting environment variables into that template before
+  # setting the command line prompt.  This allows calling 
+  # functions to influence the prompt without disrupting 
+  # the preferences of other functions that are influencing the
+  # prompt.
+  JASONNET_TITLE_PROMPT="$JASONNET_TITLE_PROMPT_STATIC$JASONNET_TITLE_PROMPT_PATH"
+  if [ "XX$JASONNET_TITLE_PROMPT" == "XX" ] ; then
+    # set a benign title since simply no lnoger getting it will not give the right effect
+    echo -ne "\e]0; \a"
+  else
+    # the outer brackets vvv mean this string do not extend the length of the actual rendered prompt
+    JASONNET_TITLE_PROMPT="\[\e]0;$JASONNET_TITLE_PROMPT_STATIC  $JASONNET_TITLE_PROMPT_PATH\a\]"
+  fi
+  #export PS1="\[\e]0;$JASONNET_TITLE_PROMPT\a\]\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]$JASONNET_BRANCH_PROMPT\n$ "
+  export PS1="$VIRTUAL_ENV_PROMPT$JASONNET_TITLE_PROMPT$JASONNET_TITLE_PROMPT_PATH\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]$JASONNET_BRANCH_PROMPT\n$ "
+}
+
+jasonnet_branchprompt() {
+  ONOFF=${1:-missing}
+  if [ "$ONOFF" == "off" ] ; then
+    export JASONNET_BRANCH_PROMPT=
+    _jasonnet_set_prompt
+  elif [ "$ONOFF" == "on" ] ; then
+    export JASONNET_BRANCH_PROMPT='$(__git_ps1 " (%s)")'
+    _jasonnet_set_prompt
+  else
+    echo "parameter missing or invalid."
+    echo "provide a parameter of off to remove the branch from the prompt.  on to add it."
+  fi
+}
+
+# set the title portion of the command line prompt
+jasonnet_settitle () { 
+  # set the prompt to ensure that it doesn't try to set the title, so that our setting it in this method sticks.
+  #export PS1="\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]$JASONNET_BRANCH_PROMPT\n$ "
+
+  # -n means do not transmit the trailing newline
+  # -e means interpret the string
+  # \e is ESC.   \e]2; is set title   \e]1; is set icon title
+  # \a is BEL  and is used to delimit the argument
+  echo -ne "\e]0;$1\a"
+  #echo -ne "\e]2;$@\a\e]1;$@\a";
+
+  export JASONNET_TITLE_PROMPT_STATIC="$1"
+  #export JASONNET_TITLE_PROMPT="\[\e]0;$1\a\]"
+  #export JASONNET_TITLE_PROMPT="\[\e]0;$JASONNET_TITLE_PROMPT_STATIC $JASONNET_TITLE_PROMPT_PATH\a\]"
+  _jasonnet_set_prompt
+}
+
+# set how the path prompt of the command line prompt is populated: short, long, off
+jasonnet_settitlepath() {  # set the default prompt which updates the title with the file path
+  # augment the prompt to set the title.
+  # \w is full path with tilde.  \W is final segment
+  #export PS1="\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]$JASONNET_BRANCH_PROMPT\n$ "
+  #export PS1="\[\e]1;\w\a\e]2;\W\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n$ "
+  export JASONNET_TITLE_PROMPT_PATH="\w"
+  #export JASONNET_TITLE_PROMPT_PATH="\[\e]0;\w\a\]"
+  #export JASONNET_TITLE_PROMPT="\[\e]1;\w\a\e]2;\W\a\]"
+  ONOFF=${1:-missing}
+  if [ "$ONOFF" == "short" ] ; then
+    export JASONNET_TITLE_PROMPT_PATH="\w"
+  elif [ "$ONOFF" == "long" ] ; then
+    export JASONNET_TITLE_PROMPT_PATH="\W"
+  elif [ "$ONOFF" == "off" ] ; then
+    export JASONNET_TITLE_PROMPT_PATH=
+  else
+    echo "parameter missing or invalid."
+    echo "provide a parameter of short, long or off"
+    return
+  fi
+  _jasonnet_set_prompt
+}
+
+# it's becoming an iritant to have to type this in so often.  So I'm making it the default
+jasonnet_branchprompt on 

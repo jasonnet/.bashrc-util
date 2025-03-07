@@ -1,0 +1,20 @@
+
+
+
+if [ $(uname -o) == "Cygwin" ] ; then
+
+  # Ubuntu non-root accounts do the following in .profile, so we'll do it as well
+  #   because we believe it is not done for this OS.
+  # TODO: if it turns out that this code is better in .profile than here (indirectly in .bashrc), then let's support .profile.d and move it there.
+
+  # set PATH so it includes user's private bin if it exists
+  if [ -d "$HOME/bin" ] ; then
+      PATH="$HOME/bin:$PATH"
+  fi
+
+  # set PATH so it includes user's private bin if it exists
+  if [ -d "$HOME/.local/bin" ] ; then
+      PATH="$HOME/.local/bin:$PATH"
+  fi
+fi
+

@@ -1,0 +1,12 @@
+# a single command that creates a directory and cd's to it
+# it does not support parameters.  Or they must be added at the end.
+
+mdcd() {
+  DIRNAME=${1:-missing}
+  if [ "$DIRNAME" == "missing" ] ; then
+    echo "ERROR: please also provide a directory name that you'd like to create"
+  else
+    mkdir -p $DIRNAME
+    cd $DIRNAME
+  fi
+}

@@ -1,0 +1,70 @@
+
+
+
+
+
+
+# When run in tmux, this script moves the specified window to the specified
+# new location, shifting other windows in the process.  
+#
+# Motivation:  The tmux  move-window  action will refuse to act if there
+#              already a window in the target position, so a script like
+#              this is needed to rearrange the order of windows.
+# 
+#              The need for this will tend to arise if one accidentally
+#              deletes a window and all the windows to the right shift
+#              left to fill the gap.  There is a setting to avoid them
+#              automatically shifting left, but you might not want to 
+#              use that setting.
+#
+# Suggestion: include a script in your path that calls this but
+# is called move-tmux-window instead.  (Underscores are awkward to type
+# compared to dashes.) -- Does the alias statement below help also achieve this?
+#
+# TODO: create a script that extends the
+# path to subdirectories of ~/.local/path or similar and then have 
+# this script add to that dir.  (Also git archive the contents of those dirs.)
+# We've tried that below, but it doesn't quite work.
+#
+# TODO: This script will probably leave the user in the window that
+# that has the same index number that he started at, but the the
+# "window" at that index might have changed so the user will then have
+# to look for his window to the right or left.  -- This is probably
+# fixable by identifying the starting window or marking the starting
+# window but I'm too tied up to investigate right now.
+
+move_tmux_window() {
+
+    CURPOS=$1
+    FINALPOS=$2
+
+    if [ $# -lt 2 ]; then
+      echo 1>&2 "$0: not enough arguments. specify the source and target window numbers"
+    elif [ "$CURPOS" -gt "$FINALPOS" ] ; then
+        #for ((i=$CURPOS; i>$FINALPOS-1; i--)) ; do
+        for ((i=$CURPOS; i>$FINALPOS; i--)) ; do
+            tmux swap-window -s :$i -t :$((i-1))
+        done
+    elif [ "$CURPOS" -lt "$FINALPOS" ] ; then
+        #for ((i=$CURPOS; i<$FINALPOS-1; i++)) ; do
+        for ((i=$CURPOS; i<$FINALPOS; i++)) ; do
+            tmux swap-window -s :$i -t :$((i+1))
+        done
+    else
+        echo "nothing to do, it's already in place"
+    fi
+
+}
+
+
+# TODO: the following does not work.  We see: line 3: move_tmux_window: command not found
+#mkdir -p ~/.local/bin
+#echo "#!/bin/bash" > ~/.local/bin/move-tmux-window
+#echo "# This file is created by Jason's ~/.bashrc.d/tmux.source .  See that file for info."  >> ~/.local/bin/move-tmux-window
+#echo "# TODO: this doesn't seem to pick up the move_tmux_window function we define in .bashrc.d/.../tmux.source.  fix it."
+#echo "move_tmux_window $1 $2 "  >> ~/.local/bin/move-tmux-window
+#chmod u+x ~/.local/bin/move-tmux-window
+#echo "move-tmux-window added to PATH by ~/.bashrc.d/.../tmux.source"
+
+# But the following seems to work on cygwin.  And perhaps also on others?
+alias move-tmux-window=move_tmux_window

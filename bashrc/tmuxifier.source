@@ -1,0 +1,17 @@
+
+
+# See  https://github.com/jimeh/tmuxifier?tab=readme-ov-file
+# After downloading:
+#   git clone https://github.com/jimeh/tmuxifier.git ~/.tmuxifier
+#
+# We update .bashrc
+# 
+export PATH="$HOME/.tmuxifier/bin:$PATH"
+
+eval "$(tmuxifier init -)"
+
+echo ""
+echo "To start up tmux, you will want to invoke"
+echo "  tmux attach"
+echo "or if that fails..."
+echo "  tmuxifier load-session jason1"
