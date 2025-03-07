@@ -1,12 +1,23 @@
 #!/bin/sh
 
-# Ex.    findgrepxargs  ..  -y .  ls -ltr
-# Ex.    findgrepxargs  ..  -y .  ls -ltr
+# Search a specified directory tree, filtering out certain names, and acting on a list of those file names
+# Ex.
+#     findgrepxargs  ..        .             ls -ltr
+#     findgrepxargs  mydir  -y [.]deleteme   rm
+#
+# Motivation:
+#    The need to do this is frequent, but it's often made difficult by filenames that contain spaces.
+#    The syntax needed to do this when file names contain spaces is difficult to remember.
 
 
 function findgrepxargs() {
     local dir=$1
     shift
+
+    if [ "$dir" = "--help" ] ; then
+      echo "TODO: add support for --help"
+      return 2
+    fi
 
     # grepflags (optional)
     #  usually you can skip this
