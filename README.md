@@ -6,8 +6,7 @@ that I'm likely to use on many machines.
 Clone this repo into your home directory and rename it.
 ```
     cd ~
-    git clone git@github.com:jasonnet/.jasonnet-bash-util.git
-    mv jasonnet-bash-util .jasonnet-bash-util
+    git clone git@github.com:jasonnet/.bashrc-util.git
 ```    
 
 ## installation step 2 - installing the ~/.bashrc support
@@ -34,6 +33,6 @@ your ~/.bashrc file.
 
 ```
     # include the ~/.bashrc.d/ tree
-    source ~/.jasonnet-bash-util/include-.bashrc.d-tree.source
+    source ~/.bashrc-util/include-.bashrc.d-tree.source
 ```
 
