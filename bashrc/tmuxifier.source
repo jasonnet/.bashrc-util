@@ -6,12 +6,35 @@
 #
 # We update .bashrc
 # 
-export PATH="$HOME/.tmuxifier/bin:$PATH"
 
-eval "$(tmuxifier init -)"
+RC=0 && which tmux >/dev/null || RC=$?
+if [ "$RC" = "0" ] ; then
+    # tmux is installed (and in the path)
 
-echo ""
-echo "To start up tmux, you will want to invoke"
-echo "  tmux attach"
-echo "or if that fails..."
-echo "  tmuxifier load-session jason1"
+    if [ ! -d "~/.tmuxifier" ] ; then 
+        echo "WARN: tmuxifier is not installed, so will not be init'd.  To install it: "
+        echo "    git clone https://github.com/jimeh/tmuxifier.git ~/.tmuxifier "
+        echo ""
+    else
+        if [[ ":$PATH:" != *":$HOME/.tmuxifier/bin:"* ]]; then
+          export PATH="$HOME/.tmuxifier/bin:$PATH"
+        fi
+        RC=0 && which tmuxifier >/dev/null || RC=$?
+        if [ "$RC" = "0" ] ; then
+            eval "$(tmuxifier init -)"
+            echo ""
+            echo "To start up tmux, you will want to invoke"
+            echo "  tmux attach"
+            echo "or if that fails..."
+            echo "  tmuxifier load-session jason1"
+        else
+            echo "WARN: somehow tmuxifier is not in the path"
+        fi  
+    fi
+else
+  echo "SUGGESTION: install tmux and start bash again"
+fi
+
+
+
+
