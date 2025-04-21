@@ -1,21 +1,33 @@
 #!/bin/sh
 
-# Search a specified directory tree, filtering out certain names, and acting on a list of those file names
+# See findgrepxargs_help for more info.
+
+function findgrepxargs_help() {
+  cat << EOF
+# Search a specified directory tree, filtering out certain names, and 
+# acting on a list of those file names
+#
 # Ex.
 #     findgrepxargs  ..        .             ls -ltr
 #     findgrepxargs  mydir  -y [.]deleteme   rm
 #
 # Motivation:
-#    The need to do this is frequent, but it's often made difficult by filenames that contain spaces.
-#    The syntax needed to do this when file names contain spaces is difficult to remember.
-
+#    - The need to do this is frequent, but it's often made difficult by 
+#      filenames that contain spaces.
+#    - The syntax needed to do this when file names contain spaces is 
+#      difficult to remember.
+#
+# Source:  $BASH_SOURCE
+#
+EOF
+}
 
 function findgrepxargs() {
-    local dir=$1
+    local dir=${1:---help}
     shift
 
     if [ "$dir" = "--help" ] ; then
-      echo "TODO: add support for --help"
+	  findgrepxargs_help
       return 2
     fi
 
