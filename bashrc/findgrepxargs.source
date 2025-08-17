@@ -1,15 +1,15 @@
 #!/bin/sh
 
-# See findgrepxargs_help for more info.
+# See ffindgrepxargs_help for more info.
 
-function findgrepxargs_help() {
+function ffindgrepxargs_help() {
   cat << EOF
 # Search a specified directory tree, filtering out certain names, and 
 # acting on a list of those file names
 #
 # Ex.
-#     findgrepxargs  ..        .             ls -ltr
-#     findgrepxargs  mydir  -y [.]deleteme   rm
+#     ffindgrepxargs       .             ls -ltr
+#     ffindgrepxargs    -y [.]deleteme   rm
 #
 # Motivation:
 #    - The need to do this is frequent, but it's often made difficult by 
@@ -23,11 +23,16 @@ EOF
 }
 
 function findgrepxargs() {
-    local dir=${1:---help}
-    shift
+  echo "use ffindgrepxargs command instead.  It does not take the first argument and instead starts from the current directory"
+}
+
+function ffindgrepxargs() {
+    #local dir=${1:---help}
+    #shift
+    local dir=.   # current directory
 
     if [ "$dir" = "--help" ] ; then
-	  findgrepxargs_help
+	  ffindgrepxargs_help
       return 2
     fi
 
@@ -53,15 +58,23 @@ function findgrepxargs() {
       unset grepflags
     fi
     # the remaining parameters will be treated as command parameters.  They probably will not be quoted when used.
+	# ...but because I almsot always pass the same command, I'll set a default value.
+	local xargs_invokes=
+	local DEFAULT_COMMAND="ls -ltr"
+	echo "arg2 is '${2}'  $#"
+	if [ "$#" = "0" ]; then
+	  # The user specified no command 
+	  local COMMAND1="$DEFAULT_COMMAND"
+	  xargs_invokes=("ls" "-ltr")
+      echo "aa $xargs_invokes"
+	else   
+	  xargs_invokes=("$@")
+      echo "bb $xargs_invokes"
+	fi
 
     # Note: we do not quote $grepflags because 
     #         if unset, then the quoted parameter is passed to grep as an empty string rather than a skipped parameter.   If we find that we want to specify multiple par
     #         and if multiple flags were set, we don't want them treated as a single flag parameter
     #       we do specify --no-ignore-case because IMHO that should be the default because it's easy to turn it off and cumbersome for the user to set it
-    find "$dir" -type f  -print0 | grep -z --no-filename --no-ignore-case $grepflags --regexp="$regex" -  | xargs --null $@ 
-    # if [ "$grepflags" = "notset" ] ; then
-    #   find "$dir" -type f  -print0 | grep -z --no-filename --no-ignore-case              --regexp="$regex" -  | xargs --null $@ 
-    # else
-    #   find "$dir" -type f  -print0 | grep -z --no-filename --no-ignore-case "$grepflags" --regexp="$regex" -  | xargs --null $@ 
-    # fi
+	find "$dir" -type f  -print0 | grep -z --no-filename --no-ignore-case $grepflags --regexp="$regex" -  | xargs --null  --no-run-if-empty "${xargs_invokes[@]}" 
 }
