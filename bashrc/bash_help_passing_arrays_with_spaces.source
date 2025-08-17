@@ -1,0 +1,62 @@
+
+
+function _bash_help_passing_arrays_with_spaces() {
+  #local largs=('a a' "b b" ccc ddd)  # works, but obviously not useful
+  #local largs=("$@")   # works.  no loss of info.  But let's do something harder
+  
+  local llargs=("$@")   # works, but let's see if we can copy to largs
+  echo 'llargs=("$@")'
+  
+  #local largs=("${llargs}")    # does not do what is intended
+  #local largs=("${llargs[*]}")  # does not work as intended
+  
+  local largs=("${llargs[@]}")  # works as intended.  array to array copy
+  echo 'largs=("${llargs[@]}")'
+
+  echo
+  echo    "# probably ideal. each element produces just one arg even if it contains spaces."
+  echo    "Trying to produce: Arg: a a   Arg: b b   Arg: ccc   Arg: ddd"
+  echo    '  calling fprintf with  "$@"'
+  echo -n '        produces : ' ; printf "Arg: %s   "  "$@" ; echo 
+  echo    '  calling fprintf with  "${largs[@]}"'
+  echo -n '        produces : ' ; printf "Arg: %s   "  "${largs[@]}" ; echo
+  echo
+  echo    "# let some args use spaces to produce several args"
+  echo    "Trying to produce: Arg: a   Arg: a   Arg: b   Arg: b   Arg: ccc   Arg: ddd"
+  echo    '  calling fprintf with  $@'
+  echo -n '        produces : ' ; printf "Arg: %s   "  $@ ; echo 
+  echo    '  calling fprintf with  $*'
+  echo -n '        produces : ' ; printf "Arg: %s   "  $* ; echo 
+  echo    '  calling fprintf with  ${largs[*]}'
+  echo -n '        produces : ' ; printf "Arg: %s   "  ${largs[*]} ; echo
+  echo    '  calling fprintf with  ${largs[@]}'
+  echo -n '        produces : ' ; printf "Arg: %s   "  ${largs[@]} ; echo
+  echo
+  echo    "# produce a single arg string from all args"
+  echo    "Trying to produce: Arg: a a b b ccc ddd"
+  echo    '  calling fprintf with  "$*"'
+  echo -n '        produces : ' ; printf "Arg: %s   "  "$*" ; echo
+  echo    '  calling fprintf with  "${largs[*]}"'
+  echo -n '        produces : ' ; printf "Arg: %s   "  "${largs[*]}" ; echo 
+  echo
+  echo    "# pass only first element but let it use spaces to produce several args"
+  echo    "Trying to produce: Arg: a   Arg: a"
+  echo    '  calling fprintf with  $largs'
+  echo -n '        produces : ' ; printf "Arg: %s   "  $largs ; echo
+  echo 
+  echo    "# poorly parsed syntaxes:"
+  echo    '  calling fprintf with  $largs[*]'
+  echo -n '        produces : ' ; printf "Arg: %s   "  $largs[*] ; echo
+  echo    '  calling fprintf with  "$largs[*]"'
+  echo -n '        produces : ' ; printf "Arg: %s   "  "$largs[*]" ; echo
+  echo    '  calling fprintf with  $largs[@]'
+  echo -n '        produces : ' ; printf "Arg: %s   "  $largs[@] ; echo   
+  echo    '  calling fprintf with  "$largs[@]"'
+  echo -n '        produces : ' ; printf "Arg: %s   "  "$largs[@]" ; echo
+}
+
+function bash_help_passing_arrays_with_spaces() {
+   echo 'calling function with following parameters: "a a" "b b" ccc ddd '
+   echo
+   _bash_help_passing_arrays_with_spaces 'a a' "b b" ccc ddd
+}
