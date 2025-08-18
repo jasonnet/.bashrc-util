@@ -60,11 +60,9 @@ function ffindgrepxargs() {
     # the remaining parameters will be treated as command parameters.  They probably will not be quoted when used.
 	# ...but because I almsot always pass the same command, I'll set a default value.
 	local xargs_invokes=
-	local DEFAULT_COMMAND="ls -ltr"
 	#echo "arg2 is '${2}'  $#"
 	if [ "$#" = "0" ]; then
 	  # The user specified no command 
-	  local COMMAND1="$DEFAULT_COMMAND"
 	  xargs_invokes=("ls" "-ltr")
       #echo "aa $xargs_invokes"
 	else   
