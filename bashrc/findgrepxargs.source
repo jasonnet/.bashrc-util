@@ -4,12 +4,30 @@
 
 function ffindgrepxargs_help() {
   cat << EOF
-# Search a specified directory tree, filtering out certain names, and 
-# acting on a list of those file names
+# Search filenames recursively from current directory, filtering
+# out certain names, and acting on a list of those file names
 #
 # Ex.
-#     ffindgrepxargs       .             ls -ltr
-#     ffindgrepxargs    -y [.]deleteme   rm
+# To list in details, date-sorted files with filenames like Hyundai and hyundai
+#     ffindgrepxargs                      hyundai
+#   or more explicitly
+#     ffindgrepxargs  -y                  hyundai      ls -ltr
+# To list them without details one per line unsorted
+#     ffindgrepxargs                      hyundai      ls
+#   or
+#     ffindgrepxargs                      hyundai      -L1
+#   or more explicitly
+#     ffindgrepxargs                      hyundai      -L1  echo
+#    or
+#     ffindgrepxargs                      hyundai      -L1  ls
+# To list filenames grouped into one line
+#     ffindgrepxargs                      hyundai      echo
+# To list only case specific, change that to
+#     ffindgrepxargs    --no-ignore-case  Hyundai
+# You can specify wild cards and other grep expressions but might need to quote
+#     ffindgrepxargs                      "happy.*[.]htm.*"
+# The xargs commands can be varied:
+#     ffindgrepxargs    --no-ignore-case "[.]DELETEME"        rm
 #
 # Motivation:
 #    - The need to do this is frequent, but it's often made difficult by 
@@ -55,7 +73,10 @@ function ffindgrepxargs() {
     else
       # that was not really grepflags, so treat it as regex and leave the remaining parameters...
       regex="$grepflags"
-      unset grepflags
+      #unset grepflags   # commented out because let's make -y the default
+      grepflags="-y"
+      # TODO: this means the only way to specify case sensitive is
+      # TODO: instead of unsetting ^^^, we could specify -y
     fi
     # the remaining parameters will be treated as command parameters.  They probably will not be quoted when used.
 	# ...but because I almsot always pass the same command, I'll set a default value.
