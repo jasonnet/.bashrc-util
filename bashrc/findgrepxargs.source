@@ -75,8 +75,6 @@ function ffindgrepxargs() {
       regex="$grepflags"
       #unset grepflags   # commented out because let's make -y the default
       grepflags="-y"
-      # TODO: this means the only way to specify case sensitive is
-      # TODO: instead of unsetting ^^^, we could specify -y
     fi
     # the remaining parameters will be treated as command parameters.  They probably will not be quoted when used.
 	# ...but because I almsot always pass the same command, I'll set a default value.
