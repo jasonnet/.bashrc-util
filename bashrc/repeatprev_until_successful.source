@@ -1,0 +1,6 @@
+
+
+# reinvokes the previous command until it is successful
+
+alias repeatprev_until_successful='while [ "$?" -ne "0" ] ; do eval $(history -p !!); done'
+
