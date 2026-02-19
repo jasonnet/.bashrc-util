@@ -11,7 +11,7 @@ alias ll='ls -alF'
 
 
 # And let's also support our favorite (long with most recent at end):
-alias lsltr='ls -lt'
+alias lsltr='ls -ltr'
 # With this defined, I can quickly invoke it with:   lsl<tab>
 #     and if I try that it and it doesn't complete, I know that I don't have that installed.
 
