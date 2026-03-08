@@ -4,17 +4,18 @@ function remove_filename_spaces_in_this_directory_tree() {
   local dirin="$1"
   pushd "$dirin" >/dev/null
   for f in * ; do
-      #echo "$f"
-	  local nowname="$f"
-      g=$(echo "$f" | sed -e 's/\s/\_/g')
-	  if [ "$f" != "$g" ] ; then 
-        echo "mv   $f   $g"
-        mv "$f"  "$g"
-		nowname="$g"
-	  fi
-	  if [ -d "$nowname" ] ; then
-		remove_filename_spaces_in_this_directory_tree "$nowname"
-	  fi 	  
+    # TODO: I think the line above will not find files that start with the . character.
+    #echo "$f"
+    local nowname="$f"
+    g=$(echo "$f" | sed -e 's/\s/\_/g')
+    if [ "$f" != "$g" ] ; then 
+      echo "mv   $f   $g"
+      mv "$f"  "$g"
+      nowname="$g"
+    fi
+    if [ -d "$nowname" ] ; then
+      remove_filename_spaces_in_this_directory_tree "$nowname"
+    fi
   done
   popd >/dev/null
 }
