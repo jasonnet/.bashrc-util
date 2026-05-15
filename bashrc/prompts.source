@@ -18,7 +18,7 @@ _jasonnet_set_prompt() {
   # prompt.
   JASONNET_TITLE_PROMPT="$JASONNET_TITLE_PROMPT_STATIC$JASONNET_TITLE_PROMPT_PATH"
   if [ "XX$JASONNET_TITLE_PROMPT" == "XX" ] ; then
-    # set a benign title since simply no lnoger getting it will not give the right effect
+    # set a benign title since simply no longer setting it will not give the right effect
     echo -ne "\e]0; \a"
   else
     # the outer brackets vvv mean this string do not extend the length of the actual rendered prompt
@@ -46,16 +46,24 @@ jasonnet_branchprompt() {
 jasonnet_settitle () { 
   # set the prompt to ensure that it doesn't try to set the title, so that our setting it in this method sticks.
   #export PS1="\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]$JASONNET_BRANCH_PROMPT\n$ "
+  export PARAM1="$1"
+  if [ $# -eq 0 ] ; then 
+    echo "ERROR: no title/parameter specified so not setting the terminal title." 1>&2
+    return 2;
+  elif [ "--help" = "$PARAM1" ] ; then 
+    echo "This command/function sets the command prompt to the specified value."
+    return
+  fi
 
   # -n means do not transmit the trailing newline
   # -e means interpret the string
   # \e is ESC.   \e]2; is set title   \e]1; is set icon title
   # \a is BEL  and is used to delimit the argument
-  echo -ne "\e]0;$1\a"
+  echo -ne "\e]0;${PARAM1}\a"
   #echo -ne "\e]2;$@\a\e]1;$@\a";
 
-  export JASONNET_TITLE_PROMPT_STATIC="$1"
-  #export JASONNET_TITLE_PROMPT="\[\e]0;$1\a\]"
+  export JASONNET_TITLE_PROMPT_STATIC="${PARAM1}"
+  #export JASONNET_TITLE_PROMPT="\[\e]0;${PARAM1}\a\]"
   #export JASONNET_TITLE_PROMPT="\[\e]0;$JASONNET_TITLE_PROMPT_STATIC $JASONNET_TITLE_PROMPT_PATH\a\]"
   _jasonnet_set_prompt
 }
