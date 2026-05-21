@@ -79,9 +79,9 @@ jasonnet_settitlepath() {  # set the default prompt which updates the title with
   #export JASONNET_TITLE_PROMPT="\[\e]1;\w\a\e]2;\W\a\]"
   ONOFF=${1:-missing}
   if [ "$ONOFF" == "short" ] ; then
-    export JASONNET_TITLE_PROMPT_PATH="\w"
-  elif [ "$ONOFF" == "long" ] ; then
     export JASONNET_TITLE_PROMPT_PATH="\W"
+  elif [ "$ONOFF" == "long" ] ; then
+    export JASONNET_TITLE_PROMPT_PATH="\w"
   elif [ "$ONOFF" == "off" ] ; then
     export JASONNET_TITLE_PROMPT_PATH=
   else
