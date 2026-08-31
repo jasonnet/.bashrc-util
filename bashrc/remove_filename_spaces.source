@@ -1,8 +1,27 @@
 #!/bin/sh
 
 function remove_filename_spaces_in_this_directory_tree() {
-  local dirin="$1"
-  pushd "$dirin" >/dev/null
+  local dirin="${1:-unspecified}"
+  if [ "$dirin" = "unspecified" ] ; then
+    echo 'assuming current directory'
+    pushd . >/dev/null
+  elif [ "$dirin" = "--help" ] ; then
+    echo 'NAME'
+    echo '    remove_filename_spaces_in_this_directory_tree'
+    echo 'SYNOPSYS'
+    echo '    remove_filename_spaces_in_this_directory_tree [directory-name]'
+    echo 'DESCRIPTION'
+    echo '    This command will search the specified directory tree for'
+    echo '    files with spaces in the name.  For those files it will '
+    echo '    rename the files by replacing each space with a _ character'
+    return
+  else
+    pushd "$dirin" >/dev/null
+    if [ "$?" != "0" ] ; then
+      # The error message will already be displayed on stderr, so just leave this function.
+      return
+    fi
+  fi
   for f in * ; do
     # TODO: I think the line above will not find files that start with the . character.
     #echo "$f"
